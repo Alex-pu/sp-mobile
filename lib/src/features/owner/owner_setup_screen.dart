@@ -12,13 +12,16 @@ class OwnerSetupScreen extends ConsumerStatefulWidget {
 
 class _OwnerSetupScreenState extends ConsumerState<OwnerSetupScreen> {
   final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _pinController = TextEditingController();
   final _shopNameController = TextEditingController();
   final _shopLocationController = TextEditingController();
+  String? _emailError;
 
   @override
   void dispose() {
     _nameController.dispose();
+    _emailController.dispose();
     _pinController.dispose();
     _shopNameController.dispose();
     _shopLocationController.dispose();
@@ -45,6 +48,22 @@ class _OwnerSetupScreenState extends ConsumerState<OwnerSetupScreen> {
               controller: _nameController,
               textInputAction: TextInputAction.next,
               decoration: const InputDecoration(labelText: 'Owner name'),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.next,
+              autocorrect: false,
+              decoration: InputDecoration(
+                labelText: 'Owner email',
+                errorText: _emailError,
+              ),
+              onChanged: (_) {
+                if (_emailError != null) {
+                  setState(() => _emailError = null);
+                }
+              },
             ),
             const SizedBox(height: 12),
             TextField(
@@ -88,11 +107,21 @@ class _OwnerSetupScreenState extends ConsumerState<OwnerSetupScreen> {
   }
 
   void _submit() {
+    final email = _emailController.text.trim();
+    if (!_isValidEmail(email)) {
+      setState(() => _emailError = 'Enter a valid email address.');
+      return;
+    }
     ref.read(ownerSessionProvider.notifier).setupOwner(
           name: _nameController.text.trim(),
+          email: email,
           pin: _pinController.text.trim(),
           shopName: _shopNameController.text.trim(),
           shopLocation: _shopLocationController.text.trim(),
         );
+  }
+
+  bool _isValidEmail(String value) {
+    return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value);
   }
 }

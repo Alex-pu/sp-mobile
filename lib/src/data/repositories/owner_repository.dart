@@ -19,6 +19,7 @@ class OwnerRepository {
 
   Future<AppUser> setupOwner({
     required String name,
+    required String email,
     required String pin,
     required String shopName,
     required String shopLocation,
@@ -27,6 +28,7 @@ class OwnerRepository {
       '/auth/setup',
       data: {
         'name': name,
+        'email': email,
         'pin': pin,
         'shopName': shopName,
         'shopLocation': shopLocation,

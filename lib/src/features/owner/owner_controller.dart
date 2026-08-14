@@ -31,6 +31,7 @@ class OwnerSessionController extends AsyncNotifier<AppUser?> {
 
   Future<void> setupOwner({
     required String name,
+    required String email,
     required String pin,
     required String shopName,
     required String shopLocation,
@@ -39,6 +40,7 @@ class OwnerSessionController extends AsyncNotifier<AppUser?> {
     state = await AsyncValue.guard(
       () => ref.read(ownerRepositoryProvider).setupOwner(
             name: name,
+            email: email,
             pin: pin,
             shopName: shopName,
             shopLocation: shopLocation,
