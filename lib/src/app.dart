@@ -9,7 +9,7 @@ class SmartPosApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Smart POS',
+      title: 'Chui POS',
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
       home: const RoleSelectionScreen(),

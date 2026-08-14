@@ -125,7 +125,7 @@ class _ReceiptBody extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            receipt.shopName.isEmpty ? 'Smart POS' : receipt.shopName,
+            receipt.shopName.isEmpty ? 'Chui POS' : receipt.shopName,
             textAlign: TextAlign.center,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),

@@ -17,7 +17,7 @@ class EscPosReceiptBuilder {
     _center(bytes);
     _bold(bytes, true);
     _writeln(
-        bytes, _fit(receipt.shopName.isEmpty ? 'Smart POS' : receipt.shopName));
+        bytes, _fit(receipt.shopName.isEmpty ? 'Chui POS' : receipt.shopName));
     _bold(bytes, false);
     _left(bytes);
     _line(bytes);

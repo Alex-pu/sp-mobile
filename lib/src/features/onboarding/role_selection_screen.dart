@@ -11,7 +11,7 @@ class RoleSelectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Smart POS'),
+        title: const Text('Chui POS'),
         actions: [
           IconButton(
             tooltip: 'Backend URL',
@@ -28,7 +28,7 @@ class RoleSelectionScreen extends StatelessWidget {
           children: [
             const SizedBox(height: 12),
             Text(
-              'Smart POS',
+              'Chui POS',
               style: Theme.of(context).textTheme.headlineLarge,
             ),
             const SizedBox(height: 8),

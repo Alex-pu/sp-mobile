@@ -37,7 +37,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final isLoading = sessionState.isLoading;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Smart POS')),
+      appBar: AppBar(title: const Text('Chui POS')),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(16),

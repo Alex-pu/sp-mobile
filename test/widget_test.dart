@@ -22,7 +22,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Smart POS'), findsWidgets);
+    expect(find.text('Chui POS'), findsWidgets);
     expect(find.text('Business owner'), findsOneWidget);
     expect(find.text('Cashier'), findsOneWidget);
   });
