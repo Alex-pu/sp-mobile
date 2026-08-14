@@ -13,15 +13,18 @@ class OwnerSetupScreen extends ConsumerStatefulWidget {
 class _OwnerSetupScreenState extends ConsumerState<OwnerSetupScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _pinController = TextEditingController();
   final _shopNameController = TextEditingController();
   final _shopLocationController = TextEditingController();
   String? _emailError;
+  String? _phoneError;
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _phoneController.dispose();
     _pinController.dispose();
     _shopNameController.dispose();
     _shopLocationController.dispose();
@@ -62,6 +65,21 @@ class _OwnerSetupScreenState extends ConsumerState<OwnerSetupScreen> {
               onChanged: (_) {
                 if (_emailError != null) {
                   setState(() => _emailError = null);
+                }
+              },
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _phoneController,
+              keyboardType: TextInputType.phone,
+              textInputAction: TextInputAction.next,
+              decoration: InputDecoration(
+                labelText: 'Owner phone',
+                errorText: _phoneError,
+              ),
+              onChanged: (_) {
+                if (_phoneError != null) {
+                  setState(() => _phoneError = null);
                 }
               },
             ),
@@ -112,9 +130,15 @@ class _OwnerSetupScreenState extends ConsumerState<OwnerSetupScreen> {
       setState(() => _emailError = 'Enter a valid email address.');
       return;
     }
+    final phone = _phoneController.text.trim();
+    if (!_isValidPhone(phone)) {
+      setState(() => _phoneError = 'Enter a valid phone number.');
+      return;
+    }
     ref.read(ownerSessionProvider.notifier).setupOwner(
           name: _nameController.text.trim(),
           email: email,
+          phone: phone,
           pin: _pinController.text.trim(),
           shopName: _shopNameController.text.trim(),
           shopLocation: _shopLocationController.text.trim(),
@@ -123,5 +147,10 @@ class _OwnerSetupScreenState extends ConsumerState<OwnerSetupScreen> {
 
   bool _isValidEmail(String value) {
     return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value);
+  }
+
+  bool _isValidPhone(String value) {
+    final digits = value.replaceAll(RegExp(r'\D'), '');
+    return digits.length >= 7 && digits.length <= 15;
   }
 }

@@ -4,6 +4,7 @@ class AppUser {
     required this.name,
     required this.role,
     this.email,
+    this.phone,
     this.shopId,
     this.shopName,
   });
@@ -12,6 +13,7 @@ class AppUser {
   final String name;
   final String role;
   final String? email;
+  final String? phone;
   final String? shopId;
   final String? shopName;
 
@@ -23,6 +25,7 @@ class AppUser {
       name: json['name'] as String,
       role: json['role'] as String,
       email: json['email'] as String?,
+      phone: json['phone'] as String?,
       shopId: json['shopId'] as String?,
       shopName: json['shopName'] as String?,
     );
