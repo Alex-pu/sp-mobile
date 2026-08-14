@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../settings/backend_url_screen.dart';
 import 'pairing_controller.dart';
 import 'scan_pair_token_screen.dart';
 
@@ -33,7 +34,22 @@ class _PairDeviceScreenState extends ConsumerState<PairDeviceScreen> {
         : widget.errorMessage;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Link device')),
+      appBar: AppBar(
+        title: const Text('Link device'),
+        actions: [
+          IconButton(
+            tooltip: 'Backend URL',
+            onPressed: isLoading
+                ? null
+                : () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const BackendUrlScreen(),
+                      ),
+                    ),
+            icon: const Icon(Icons.dns),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(16),

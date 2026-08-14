@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../owner/owner_gate.dart';
 import '../pairing/pairing_gate.dart';
+import '../settings/backend_url_screen.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
   const RoleSelectionScreen({super.key});
@@ -9,11 +10,23 @@ class RoleSelectionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Smart POS'),
+        actions: [
+          IconButton(
+            tooltip: 'Backend URL',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const BackendUrlScreen()),
+            ),
+            icon: const Icon(Icons.dns),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            const SizedBox(height: 32),
+            const SizedBox(height: 12),
             Text(
               'Smart POS',
               style: Theme.of(context).textTheme.headlineLarge,
@@ -36,7 +49,8 @@ class RoleSelectionScreen extends StatelessWidget {
             _RoleCard(
               icon: Icons.point_of_sale,
               title: 'Cashier',
-              subtitle: 'Link this phone to a shop, then sign in with your PIN.',
+              subtitle:
+                  'Link this phone to a shop, then sign in with your PIN.',
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const PairingGate()),
               ),
