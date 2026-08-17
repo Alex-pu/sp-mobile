@@ -19,7 +19,7 @@ String? normalizeApiBaseUrl(String input) {
     path = '$path/api';
   }
 
-  return '${uri.scheme}://${uri.authority}$path';
+  return '${uri.scheme}://${uri.authority}$path/';
 }
 
 String relativeApiPath(String path) {
