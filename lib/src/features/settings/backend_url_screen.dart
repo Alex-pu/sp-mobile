@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/config/app_config.dart';
+import '../../core/network/api_base_url.dart';
 import '../../core/providers/core_providers.dart';
 
 class BackendUrlScreen extends ConsumerStatefulWidget {
@@ -73,7 +74,7 @@ class _BackendUrlScreenState extends ConsumerState<BackendUrlScreen> {
   }
 
   Future<void> _save() async {
-    final normalized = _normalizeApiBaseUrl(_controller.text);
+    final normalized = normalizeApiBaseUrl(_controller.text);
     if (normalized == null) {
       setState(() => _error = 'Enter a valid URL.');
       return;
@@ -89,31 +90,4 @@ class _BackendUrlScreenState extends ConsumerState<BackendUrlScreen> {
     );
     Navigator.of(context).pop(true);
   }
-}
-
-String? _normalizeApiBaseUrl(String input) {
-  var value = input.trim();
-  if (value.isEmpty) {
-    return null;
-  }
-  if (!value.startsWith('http://') && !value.startsWith('https://')) {
-    value = 'http://$value';
-  }
-
-  final uri = Uri.tryParse(value);
-  if (uri == null || uri.host.isEmpty) {
-    return null;
-  }
-
-  var path = uri.path;
-  if (path.isEmpty || path == '/') {
-    path = '/api';
-  } else {
-    path = path.replaceFirst(RegExp(r'/$'), '');
-    if (!path.endsWith('/api')) {
-      path = '$path/api';
-    }
-  }
-
-  return uri.replace(path: path, query: '', fragment: '').toString();
 }

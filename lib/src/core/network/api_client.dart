@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 import '../config/app_config.dart';
 import '../storage/secure_store.dart';
+import 'api_base_url.dart';
 
 class ApiClient {
   ApiClient(this._secureStore)
@@ -17,9 +18,13 @@ class ApiClient {
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           final savedBaseUrl = await _secureStore.readApiBaseUrl();
-          if (savedBaseUrl != null && savedBaseUrl.isNotEmpty) {
-            options.baseUrl = savedBaseUrl;
+          final normalizedBaseUrl = normalizeApiBaseUrl(
+            savedBaseUrl ?? AppConfig.defaultApiBaseUrl,
+          );
+          if (normalizedBaseUrl != null) {
+            options.baseUrl = normalizedBaseUrl;
           }
+          options.path = relativeApiPath(options.path);
           final token = await _secureStore.readToken();
           if (token != null && token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
