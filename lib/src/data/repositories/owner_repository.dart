@@ -1,5 +1,7 @@
 import '../../core/network/api_client.dart';
 import '../../core/storage/secure_store.dart';
+import 'package:dio/dio.dart';
+import 'package:path/path.dart' as path;
 import '../models/app_user.dart';
 import '../models/device_invite.dart';
 import '../models/product.dart';
@@ -114,6 +116,46 @@ class OwnerRepository {
     return products
         .map((product) => Product.fromJson(product as Map<String, dynamic>))
         .toList();
+  }
+
+  Future<Product> createProduct({
+    required String shopId,
+    required String code,
+    required String name,
+    required String category,
+    required double costPrice,
+    required double sellingPrice,
+    required int stockLevel,
+  }) async {
+    final response = await _apiClient.dio.post(
+      '/products',
+      data: {
+        'shopId': shopId,
+        'code': code,
+        'name': name,
+        'category': category,
+        'costPrice': costPrice,
+        'sellingPrice': sellingPrice,
+        'stockLevel': stockLevel,
+      },
+    );
+    final data = response.data as Map<String, dynamic>;
+    return Product.fromJson(data['data'] as Map<String, dynamic>);
+  }
+
+  Future<Map<String, dynamic>> uploadProducts({
+    required String shopId,
+    required String filePath,
+  }) async {
+    final formData = FormData.fromMap({
+      'shopId': shopId,
+      'file': await MultipartFile.fromFile(
+        filePath,
+        filename: path.basename(filePath),
+      ),
+    });
+    final response = await _apiClient.dio.post('/products/upload', data: formData);
+    return Map<String, dynamic>.from(response.data as Map);
   }
 
   Future<Product> setProductStock({
