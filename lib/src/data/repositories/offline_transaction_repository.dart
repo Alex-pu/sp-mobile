@@ -24,16 +24,17 @@ class OfflineTransactionRepository {
   final LocalDatabase _localDatabase;
   final _uuid = const Uuid();
 
-  Future<String> saveSale({
+  Future<PendingSale> saveSale({
     required String shopId,
     required String cashierId,
     required String cashierName,
     required Shift shift,
     required List<CartItem> items,
     required String paymentMethod,
+    String? transactionId,
   }) async {
     final db = await _localDatabase.database;
-    final id = _uuid.v4();
+    final id = transactionId ?? _uuid.v4();
     final receiptNumber = _receiptNumber();
     final now = DateTime.now().toUtc().toIso8601String();
     final total = items.fold<double>(0, (sum, item) => sum + item.lineTotal);
@@ -81,7 +82,11 @@ class OfflineTransactionRepository {
       'last_error': null,
     });
 
-    return receiptNumber;
+    return PendingSale(
+      id: id,
+      receiptNumber: receiptNumber,
+      payload: payload,
+    );
   }
 
   Future<List<PendingSale>> pendingSales({int limit = 50}) async {

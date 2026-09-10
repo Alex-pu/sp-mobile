@@ -15,7 +15,15 @@ class CartScreen extends ConsumerStatefulWidget {
 }
 
 class _CartScreenState extends ConsumerState<CartScreen> {
+  String _paymentMethod = 'cash';
+  final _phoneController = TextEditingController();
   bool _isSaving = false;
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,22 +34,60 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Cart')),
       body: SafeArea(
-        child: ListView.separated(
-          padding: const EdgeInsets.all(12),
-          itemBuilder: (context, index) {
-            final item = items[index];
-            return ListTile(
-              tileColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
-              title: Text(item.product.name),
-              subtitle: Text('Qty ${item.quantity}'),
-              trailing: Text(item.lineTotal.toStringAsFixed(2)),
-              onLongPress: () => controller.remove(item.product),
-            );
-          },
-          separatorBuilder: (_, __) => const SizedBox(height: 8),
-          itemCount: items.length,
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.separated(
+                padding: const EdgeInsets.all(12),
+                itemBuilder: (context, index) {
+                  final item = items[index];
+                  return ListTile(
+                    tileColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    title: Text(item.product.name),
+                    subtitle: Text('Qty ${item.quantity}'),
+                    trailing: Text(item.lineTotal.toStringAsFixed(2)),
+                    onLongPress: () => controller.remove(item.product),
+                  );
+                },
+                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                itemCount: items.length,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+              child: SegmentedButton<String>(
+                segments: const [
+                  ButtonSegment(
+                    value: 'cash',
+                    label: Text('Cash'),
+                    icon: Icon(Icons.money),
+                  ),
+                  ButtonSegment(
+                    value: 'mpesa',
+                    label: Text('M-Pesa'),
+                    icon: Icon(Icons.phone_android),
+                  ),
+                ],
+                selected: {_paymentMethod},
+                onSelectionChanged: (value) =>
+                    setState(() => _paymentMethod = value.first),
+              ),
+            ),
+            if (_paymentMethod == 'mpesa')
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                child: TextField(
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(
+                    labelText: 'Customer M-Pesa phone',
+                    hintText: '2547XXXXXXXX',
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
       bottomNavigationBar: SafeArea(
@@ -52,7 +98,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             child: Text(
               _isSaving
                   ? 'Saving...'
-                  : 'Save cash sale - ${total.toStringAsFixed(2)}',
+                  : 'Pay ${_paymentMethod == 'mpesa' ? 'with M-Pesa' : 'cash'} - ${total.toStringAsFixed(2)}',
             ),
           ),
         ),
@@ -63,18 +109,20 @@ class _CartScreenState extends ConsumerState<CartScreen> {
   Future<void> _checkout() async {
     setState(() => _isSaving = true);
     try {
-      final receipt =
-          await ref.read(cartControllerProvider.notifier).checkout();
+      final sale = await ref.read(cartControllerProvider.notifier).checkout(
+            paymentMethod: _paymentMethod,
+            phoneNumber: _phoneController.text,
+          );
       ref.invalidate(localProductsProvider);
       ref.invalidate(pendingSalesCountProvider);
       ref.invalidate(recentReceiptsProvider);
       final savedReceipt = await ref
           .read(receiptRepositoryProvider)
-          .findByReceiptNumber(receipt);
+          .findByReceiptNumber(sale.receiptNumber);
       if (!mounted) return;
       if (savedReceipt == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Sale saved: $receipt')),
+          SnackBar(content: Text('Sale saved: ${sale.receiptNumber}')),
         );
         Navigator.of(context).pop();
         return;
