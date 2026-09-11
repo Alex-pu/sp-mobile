@@ -4,6 +4,30 @@ import '../config/app_config.dart';
 import '../storage/secure_store.dart';
 import 'api_base_url.dart';
 
+String apiErrorMessage(Object error) {
+  if (error is DioException) {
+    final responseData = error.response?.data;
+    if (responseData is Map) {
+      final message = responseData['message'];
+      if (message is String && message.trim().isNotEmpty) {
+        return message;
+      }
+    }
+    if (error.response?.statusCode == 401) {
+      return 'Invalid username or password.';
+    }
+    if (error.type == DioExceptionType.connectionTimeout ||
+        error.type == DioExceptionType.receiveTimeout ||
+        error.type == DioExceptionType.connectionError) {
+      return 'Could not reach the server. Check the connection and try again.';
+    }
+  }
+  if (error is StateError) {
+    return error.message;
+  }
+  return 'Something went wrong. Please try again.';
+}
+
 class ApiClient {
   ApiClient(this._secureStore)
       : _dio = Dio(

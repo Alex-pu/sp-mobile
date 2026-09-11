@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/network/api_client.dart';
 import '../products/product_providers.dart';
 import '../receipts/receipt_preview_screen.dart';
 import '../receipts/receipt_providers.dart';
@@ -136,7 +137,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(error.toString())));
+      ).showSnackBar(SnackBar(content: Text(apiErrorMessage(error))));
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }

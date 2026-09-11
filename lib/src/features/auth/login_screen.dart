@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/network/api_client.dart';
 import '../cashier/cashier_home_screen.dart';
 import 'auth_controller.dart';
 
@@ -69,7 +70,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             if (sessionState.hasError) ...[
               const SizedBox(height: 12),
               Text(
-                sessionState.error.toString(),
+                apiErrorMessage(sessionState.error!),
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             ],
